@@ -10,10 +10,10 @@
           width="100%"
       >
         <el-menu-item index="1"><router-link to="/">首页</router-link></el-menu-item>
-        <el-menu-item index="2"><router-link to="/controlArticle">我的发布</router-link></el-menu-item>
-        <el-menu-item index="3"><router-link to="/article/addArticle">失物发布</router-link></el-menu-item>
+        <el-menu-item index="2"><router-link to="/controlItem">我的发布</router-link></el-menu-item>
+        <el-menu-item index="3"><router-link to="/item/addItem">失物发布</router-link></el-menu-item>
         <el-menu-item index="4">
-          <a href="https://github.com/hub6622/Pblog_vue_springboot" target="_blank">关于本站</a>
+          <a href="https://github.com/hub6622/LostAndFound_web_app" target="_blank">关于本站</a>
         </el-menu-item>
       </el-menu>
     </el-col>

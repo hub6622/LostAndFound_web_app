@@ -25,33 +25,33 @@
         <el-sub-menu index="2">
           <template #title>
             <el-icon>
-              <icon-menu/>
+              <IconMenu/>
             </el-icon>
             <span>失物分类</span>
           </template>
           <el-menu-item-group>
             <template #title><span>语言</span></template>
             <el-menu-item v-for="(item, index) in categoryList" :key="index">
-              <router-link :to="'/article/category/'+item">
+              <router-link :to="'/item/category/'+item">
                 {{ item }}
               </router-link>
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
         <el-sub-menu index="3">
-            <template #title>
-              <el-icon>
-                <icon-menu/>
-              </el-icon>
-              <span>失物推荐</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item  v-for="(item, index) in articleList" :key="index">
-                <router-link :to="'/article/articleMain/'+item.id">
-                    {{ item.title }}
-                </router-link>
-              </el-menu-item>
-            </el-menu-item-group>
+          <template #title>
+            <el-icon>
+              <IconMenu/>
+            </el-icon>
+            <span>失物推荐</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item v-for="(item, index) in itemList" :key="index">
+              <router-link :to="'/item/main/'+item.id">
+                {{ item.title }}
+              </router-link>
+            </el-menu-item>
+          </el-menu-item-group>
         </el-sub-menu>
       </el-menu>
     </el-aside>
@@ -59,26 +59,27 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, onMounted} from 'vue'
-import {HomeFilled, Document, Menu as IconMenu, Location, Setting,} from '@element-plus/icons-vue'
-import {getCategoryService, hotArticleService} from "@/api/article"
-import router from "@/router/router.js";
+import {reactive, ref, onMounted} from 'vue';
+import {HomeFilled, Document, Menu as IconMenu, Location, Setting} from '@element-plus/icons-vue';
+import {getCategoryService, hotItemService} from '@/api/item';
+import router from '@/router/router.js';
 
-const isCollapse = ref(false)
+const isCollapse = ref(false);
 const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+  console.log(key, keyPath);
+};
 const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-const categoryList = ref([])
-const articleList = ref([])
+  console.log(key, keyPath);
+};
+const categoryList = ref([]);
+const itemList = ref([]);
+
 onMounted(async () => {
   let result = await getCategoryService();
-  let result2 = await hotArticleService()
-  articleList.value = result2.data;
+  let result2 = await hotItemService();
+  itemList.value = result2.data;
   categoryList.value = result.data;
-})
+});
 </script>
 
 <style scoped>
@@ -92,9 +93,8 @@ a {
   text-decoration: none;
   color: black;
 }
-.article-text a{
+.item-text a {
   font-size: 17px;
   color: palevioletred;
 }
-
 </style>

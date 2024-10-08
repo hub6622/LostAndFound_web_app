@@ -4,16 +4,15 @@
     <el-input v-model="article.title" placeholder="请输入文章标题" class="input-title"></el-input>
     <span style="font-size: 29px">文章类型</span><br>
     <el-select v-model="article.category" placeholder="Select" style="width: 100%">
-      <el-option v-for="(item, index) in categoryList" :key="item" :label="item" :value="item"/>
+      <el-option v-for="item in categoryList" :key="item" :label="item" :value="item"/>
     </el-select>
-<!--    <el-input v-model="article.category" placeholder="请输入文章类型" class="input-title"></el-input>-->
   </div>
   <div class="container">
     <div id="vditor"></div>
   </div>
   <div class="button-wrapper">
-    <el-button type="primary" class="button-wrapper" @click="uploadArticle" v-if="isAddArticle">提交</el-button>
-    <el-button type="primary" class="button-wrapper" @click="editArticle" v-else>修改</el-button>
+    <el-button type="primary" @click="uploadArticle" v-if="isAddArticle">提交</el-button>
+    <el-button type="primary" @click="editArticle" v-else>修改</el-button>
   </div>
 </template>
 
@@ -21,7 +20,7 @@
 import Vditor from "vditor";
 import "vditor/src/assets/less/index.less"
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {addArticleService, getCategoryService, articleListByIdService} from "@/api/article"
+import {addItemService, getCategoryService, itemListByIdService} from "@/api/item"
 import {useRoute} from "vue-router"
 import router from "@/router/router"
 import {ElMessage} from "element-plus";
@@ -29,32 +28,36 @@ import {ElMessage} from "element-plus";
 let vditor
 const route = useRoute()
 
-interface Article {
+interface Item {
   id: number;
   title: string;
-  category: string
+  category: string;
   content: string;
 }
 
-const article = ref<Article>({
+const article = ref<Item>({
   id: 0,
   title: '请输入标题',
-  category: '请输入类型',
+  category: '请选择类型',
   content: '请输入内容'
 })
 const isAddArticle = ref(true)
 const categoryList = ref([])
+
 onMounted(() => {
   const getCategory = async () => {
     let result = await getCategoryService()
     categoryList.value = result.data
   }
+
   getCategory()
-  const getArticleById = async () => {
-    let result = await articleListByIdService(route.params.articleId);
+
+  const getItemById = async () => {
+    let result = await itemListByIdService(route.params.itemId as string);
     article.value = result.data;
     initVditor()
   }
+
   const initVditor = () => {
     vditor = new Vditor('vditor', {
       value: '### 测试',
@@ -75,7 +78,8 @@ onMounted(() => {
       }
     })
   }
-  if (route.path === '/article/addArticle') {
+
+  if (route.path === '/item/addArticle') {
     initVditor()
     article.value = {
       id: 0,
@@ -85,36 +89,41 @@ onMounted(() => {
     }
     isAddArticle.value = true
   } else {
-    getArticleById()
+    getItemById()
     isAddArticle.value = false
   }
 })
-//销毁，避免内存泄漏，富文本编辑器基本都需要销毁
+
+// 销毁，避免内存泄漏，富文本编辑器基本都需要销毁
 onBeforeUnmount(() => {
   vditor.destroy()
   vditor = null
 })
+
 watch(() => route.path, (newValue, oldValue) => {
-  if (newValue === '/article/addArticle') {
+  if (newValue === '/item/addArticle') {
     article.value = {
       id: 0,
       title: '请输入标题',
-      category: '比如Vue',
+      category: '请选择类型',
       content: '请输入内容'
     }
-    vditor.setValue(article.value.content)
+    initVditor()
     isAddArticle.value = true
   } else {
+    getItemById()
     isAddArticle.value = false
   }
 })
+
 const uploadArticle = async () => {
-  await addArticleService(article.value)
+  await addItemService(article.value)
   ElMessage.success("发布文章成功")
   router.push('/')
 }
+
 const editArticle = async () => {
-  await addArticleService(article.value)
+  await addItemService(article.value)
   ElMessage.success("修改文章成功")
   router.push('/controlArticle')
 }

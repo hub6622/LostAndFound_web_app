@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import {computed, defineProps, ref, defineEmits} from 'vue'
 import replyCommentVue from '@/components/replyComment.vue';
-import {addCommentReplyService} from "@/api/article"
+import {addCommentReplyService} from "@/api/item"
 import {ElMessage, emitChangeFn} from "element-plus";
 interface CommentData {
   id: number;

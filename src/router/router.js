@@ -1,32 +1,33 @@
-import { createRouter, createWebHistory} from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import LoginVue from '@/views/Login.vue';
 import LayoutVue from '@/views/Layout.vue';
-import articleCategory from '@/views/article/category.vue'
-import articleMain from '@/views/article/articleMain.vue'
-import addArticle from '@/views/article/editArticle.vue'
-import controlArticle from '@/views/user/controlArticle.vue'
-import userInfo from '@/views/user/userInfo.vue'
+import itemCategory from '@/views/item/category.vue'; // 修改路径
+import itemMain from '@/views/item/itemMain.vue'; // 修改路径
+import addItem from '@/views/item/editItem.vue'; // 修改路径
+import controlItem from '@/views/user/controlItem.vue'; // 修改路径
+import userInfo from '@/views/user/userInfo.vue';
 
 const routes = [
-    {path: '/login', component: LoginVue},
+    { path: '/login', component: LoginVue },
     {
         path: '/',
-        redirect: '/article/category',
+        redirect: '/item/category', // 修改重定向路径
         component: LayoutVue,
         children: [
-            {path: '/article/category/:cate', component: articleCategory},
-            {path: '/article/category', component: articleCategory},
-            {path: '/article/articleMain/:articleId',name: 'articleMain', component: articleMain},
-            {path: '/article/addArticle', component: addArticle},
-            {path: '/controlArticle', component: controlArticle},
-            {path: '/article/editArticle/:articleId', component: addArticle},
-            {path: '/userInfo', component: userInfo},
-        ]
+            { path: '/item/category/:cate', component: itemCategory }, // 修改路径
+            { path: '/item/category', component: itemCategory }, // 修改路径
+            { path: '/item/main/:itemId', name: 'itemMain', component: itemMain }, // 修改路径和参数名
+            { path: '/item/addItem', component: addItem }, // 修改路径
+            { path: '/controlItem', component: controlItem }, // 修改路径
+            { path: '/item/editItem/:itemId', component: addItem }, // 修改路径和参数名
+            { path: '/userInfo', component: userInfo },
+        ],
     },
-]
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
+
 export default router;
