@@ -12,8 +12,8 @@ export const userInfoService = () => {
 export const getUserCommentService = () => {
     return request.get('/user/getUserComment')
 }
-export const userCommentDeleteService = (id) => {
-    return request.post('/user/commentDelete',{id:id})
+export const userCommentDeleteService = (id,itemId) => {
+    return request.post('/user/commentDelete',{id:id,itemId:itemId})
 }
 
 export const userReplyDeleteService = (id) => {

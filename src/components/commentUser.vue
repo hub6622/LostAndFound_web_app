@@ -65,6 +65,7 @@ interface CommentData {
         },
         replyTime: string,
         content: string,
+        itemId: number
       }[]
 }
 
@@ -87,7 +88,7 @@ const replyShowFun = () => {
   replyShow.value = !replyShow.value
 }
 const addCommentReply = async () => {
-  await addCommentReplyService({content: replyContent.value, commentId: props.comments.id})
+  await addCommentReplyService({content: replyContent.value, commentId: props.comments.id, itemId: props.comments.itemId})
   ElMessage.success("回复成功")
   emit('updateReply')
   replyShowFun()
@@ -99,10 +100,6 @@ const addCommentReply = async () => {
   font-size: 18px;
   color: #333;
   font-weight: 500;
-  margin-top: 10px;
-}
-.user-comment {
-  margin-top: 50px;
 }
 .comment-content {
   margin-left: 70px;
@@ -117,6 +114,7 @@ const addCommentReply = async () => {
   border: none;
   cursor: pointer;
   border-radius: 4px;
+  background-color: darkgray;
 }
 
 .replyBut:hover{

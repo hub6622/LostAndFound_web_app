@@ -1,154 +1,142 @@
 <template>
-  <div class="input-text">
+  <div style="display: flex; flex-direction: column; margin-left: 250px">
     <span style="font-size: 29px">请输入标题</span>
-    <el-input v-model="article.title" placeholder="请输入文章标题" class="input-title"></el-input>
-    <span style="font-size: 29px">文章类型</span><br>
-    <el-select v-model="article.category" placeholder="Select" style="width: 100%">
+    <el-input v-model="item.title" placeholder="请输入文章标题" class="input-title"></el-input>
+    <span style="font-size: 29px">物品种类</span>
+    <el-select v-model="item.category" placeholder="Select" class="input-title">
       <el-option v-for="item in categoryList" :key="item" :label="item" :value="item"/>
     </el-select>
+    <span style="font-size: 29px">失拾情况</span>
+    <el-select v-model="item.lostOrFound" style="display: block" placeholder="Select" class="input-title">
+      <el-option :label="'拾物'" :value="0"/>
+      <el-option :label="'失物'" :value="1"/>
+    </el-select>
+    <span style="font-size: 29px">物品图片</span>
+    <el-avatar :size="350" shape="square" :src="item.picUrl" style="margin-top: 10px"/>
+    <el-upload
+        ref="uploadRef"
+        :show-file-list="false"
+        :auto-upload="true"
+        action="/api/upload"
+        name="file"
+        :headers="{'Authorization':token}"
+        :on-success="uploadSuccess"
+    >
+      <el-button class="mid-btn" type="success">
+        选择图片
+      </el-button>
+    </el-upload>
+    <span style="font-size: 29px">请输入内容描述</span>
+    <el-input v-model="item.content" type="textarea" placeholder="请输入内容描述" class="input-title"
+              :rows="5"></el-input>
+    <div class="button-wrapper">
+      <el-button type="primary" @click="uploadItem" v-if="isAddItem">提交</el-button>
+      <el-button type="primary" @click="editItem" v-else>修改</el-button>
+      <el-button @click="resetForm">重置</el-button>
+    </div>
   </div>
-  <div class="container">
-    <div id="vditor"></div>
-  </div>
-  <div class="button-wrapper">
-    <el-button type="primary" @click="uploadArticle" v-if="isAddArticle">提交</el-button>
-    <el-button type="primary" @click="editArticle" v-else>修改</el-button>
-  </div>
+
 </template>
 
 <script setup lang="ts">
-import Vditor from "vditor";
-import "vditor/src/assets/less/index.less"
-import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {addItemService, getCategoryService, itemListByIdService} from "@/api/item"
+import {ref, watch} from "vue";
+import {addItemService, getCategoryService, itemListByIdService, updateItemService} from "@/api/item"
 import {useRoute} from "vue-router"
 import router from "@/router/router"
-import {ElMessage} from "element-plus";
+import {ElMessage, FormInstance} from "element-plus";
+import {useTokenStore} from "@/stores/token"
 
-let vditor
 const route = useRoute()
+const tokenStore = useTokenStore()
 
 interface Item {
   id: number;
   title: string;
   category: string;
   content: string;
+  picUrl: string;
+  lostOrFound: number
 }
 
-const article = ref<Item>({
+const item = ref<Item>({
   id: 0,
-  title: '请输入标题',
-  category: '请选择类型',
-  content: '请输入内容'
+  title: '',
+  category: '',
+  content: '',
+  picUrl: '#',
+  lostOrFound: 1
 })
-const isAddArticle = ref(true)
+const isAddItem = ref(true)
 const categoryList = ref([])
-
-onMounted(() => {
-  const getCategory = async () => {
-    let result = await getCategoryService()
-    categoryList.value = result.data
-  }
-
-  getCategory()
-
-  const getItemById = async () => {
-    let result = await itemListByIdService(route.params.itemId as string);
-    article.value = result.data;
-    initVditor()
-  }
-
-  const initVditor = () => {
-    vditor = new Vditor('vditor', {
-      value: '### 测试',
-      height: 1000,
-      width: '100%',
-      mode: 'sv',
-      toolbar: [
-        'emoji', 'headings', 'bold', 'italic', 'strike', '|',
-        'link', 'list', 'check', 'quote', 'code', '|',
-        'inline-code', 'table', 'undo', 'redo', '|',
-        'fullscreen', 'outline', 'edit-mode', 'help'
-      ],
-      after() {
-        vditor.setValue(article.value.content)
-      },
-      input(value: string) {
-        article.value.content = vditor.getHTML()
-      }
-    })
-  }
-
-  if (route.path === '/item/addArticle') {
-    initVditor()
-    article.value = {
-      id: 0,
-      title: '请输入标题',
-      category: '请选择类型',
-      content: '请输入内容'
-    }
-    isAddArticle.value = true
-  } else {
+const isLostOrFound = ref(false)
+const token = ref(tokenStore.token)
+const getCategory = async () => {
+  let result = await getCategoryService()
+  categoryList.value = result.data
+  if (route.path != '/item/addItem') {
+    isAddItem.value = false
     getItemById()
-    isAddArticle.value = false
   }
-})
+}
+getCategory()
 
-// 销毁，避免内存泄漏，富文本编辑器基本都需要销毁
-onBeforeUnmount(() => {
-  vditor.destroy()
-  vditor = null
-})
-
+const getItemById = async () => {
+  let result = await itemListByIdService(route.params.itemId as string);
+  item.value = result.data;
+}
 watch(() => route.path, (newValue, oldValue) => {
-  if (newValue === '/item/addArticle') {
-    article.value = {
+  if (newValue === '/item/addItem') {
+    item.value = {
       id: 0,
-      title: '请输入标题',
-      category: '请选择类型',
-      content: '请输入内容'
+      title: '',
+      category: '',
+      content: '',
+      picUrl: '#',
+      lostOrFound: 1
     }
-    initVditor()
-    isAddArticle.value = true
-  } else {
-    getItemById()
-    isAddArticle.value = false
+    isAddItem.value = true
   }
 })
 
-const uploadArticle = async () => {
-  await addItemService(article.value)
-  ElMessage.success("发布文章成功")
+const uploadItem = async () => {
+  await addItemService(item.value)
+  ElMessage.success("发布物品信息成功")
   router.push('/')
 }
-
-const editArticle = async () => {
-  await addItemService(article.value)
-  ElMessage.success("修改文章成功")
-  router.push('/controlArticle')
+const uploadSuccess = (result) => {
+  item.value.picUrl = result.data;
+  ElMessage.success("上传图片成功")
+}
+const resetForm = () => {
+  item.value = {
+    id: 0,
+    title: '',
+    category: '',
+    content: '',
+    picUrl: '#',
+    lostOrFound: 1
+  }
+}
+const editItem = async () => {
+  await updateItemService(item.value)
+  ElMessage.success("修改物品信息成功")
+  router.push('/controlItem')
 }
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 800px;
+.input-title {
+  width: 700px;
 }
 
-#vditor {
-  width: 1000px;
-  height: 700px;
+.mid-btn {
+  width: 400px;
+  margin-top: 10px;
 }
 
 .button-wrapper {
   width: 250px;
   height: 50px;
   margin: 10px auto;
-}
-
-.input-text {
-  margin-bottom: 10px;
 }
 </style>

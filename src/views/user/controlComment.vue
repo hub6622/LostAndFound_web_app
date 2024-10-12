@@ -13,8 +13,14 @@
           <template v-slot="{row}">
             <el-button class="optBtn"
                        type="danger" icon="el-icon-delete" circle
-                       @click.prevent="commentDel(row.id)">
+                       @click.prevent="commentDel(row.id,row.itemId)">
               <Delete style="width: 1em; height: 1em; margin-right: 8px"></Delete>
+            </el-button>
+            <el-button class="optBtn"
+                       type="primary"
+                       icon="el-icon-edit" circle
+                       @click.prevent="pushTo(row.itemId)">
+              <View style="width: 1em; height: 1em; margin-right: 8px"/>
             </el-button>
           </template>
         </el-table-column>
@@ -29,6 +35,12 @@
                        @click.prevent="replyDel(row.id)">
               <Delete style="width: 1em; height: 1em; margin-right: 8px"></Delete>
             </el-button>
+            <el-button class="optBtn"
+                       type="primary"
+                       icon="el-icon-edit" circle
+                       @click.prevent="pushTo(row.itemId)">
+              <View style="width: 1em; height: 1em; margin-right: 8px"/>
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -41,26 +53,29 @@ import {getUserCommentService, userCommentDeleteService, userReplyDeleteService}
 import {Delete, View} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import {ElMessage} from "element-plus";
-
+import router from "@/router/router.js";
 
 const commentList = ref([])
 const replyList = ref([])
 const getCommentList = async () => {
+  replyList.value = []
   let result = await getUserCommentService();
   commentList.value = result.data;
   replyList.value = result.data[0].commentReply;
-  console.log(result.data)
 }
 getCommentList()
-const commentDel = async (id) => {
-  ElMessage.success("删除成功")
-  await userCommentDeleteService(id)
+const commentDel = async (id, itemId) => {
+  await userCommentDeleteService(id,itemId)
   await getCommentList()
+  ElMessage.success("删除成功")
 }
 const replyDel = async (id) => {
-  ElMessage.success("删除成功")
   await userReplyDeleteService(id)
   await getCommentList()
+  ElMessage.success("删除成功")
+}
+const pushTo = (id) => {
+  router.push({path: '/item/main/' + id})
 }
 defineExpose({getCommentList})
 </script>

@@ -3,15 +3,18 @@
   <el-row>
     <el-col :span="18">
       <el-menu
+          :default-active="activeIndex"
+          class="el-menu-demo"
+          mode="horizontal"
+          :ellipsis="false"
+          @select="handleSelect"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
-          mode="horizontal"
-          width="100%"
       >
-        <el-menu-item index="1"><router-link to="/">首页</router-link></el-menu-item>
-        <el-menu-item index="2"><router-link to="/controlItem">我的发布</router-link></el-menu-item>
-        <el-menu-item index="3"><router-link to="/item/addItem">失物发布</router-link></el-menu-item>
+        <el-menu-item index="1">首页</el-menu-item>
+        <el-menu-item index="2"><router-link :to="'/controlItem'">我的发布</router-link></el-menu-item>
+        <el-menu-item index="3"><router-link :to="'/item/addItem'">失物发布</router-link></el-menu-item>
         <el-menu-item index="4">
           <a href="https://github.com/hub6622/LostAndFound_web_app" target="_blank">关于本站</a>
         </el-menu-item>
@@ -24,6 +27,9 @@
           mode="horizontal"
           width="100%"
       >
+        <el-menu-item>
+          <span>消息提醒</span>
+        </el-menu-item>
         <el-menu-item>
           <el-avatar v-if="userInfo" :size="50" shape="square" :src="userInfo?userInfo.avatar:null" />
         </el-menu-item>
@@ -56,7 +62,16 @@ const logOut = () => {
   tokenStore.removeToken()
   router.push({path:"/"})
 }
-
+const activeIndex = ref('1')
+const handleSelect = (key: string, keyPath: string[]) => {
+  if (key === '1'){
+    router.push("/")
+  }else if(key === '2') {
+    router.push("/controlItem")
+  }else if(key === '3') {
+    router.push("/item/addItem")
+  }
+}
 watch( () => userInfoStore.info, (newValue) => {
   userInfo.value = newValue
 })
@@ -66,5 +81,8 @@ watch( () => userInfoStore.info, (newValue) => {
 .header{
   width: 100%;
   background-color: #545c64;
+}
+a{
+  text-decoration: none;
 }
 </style>

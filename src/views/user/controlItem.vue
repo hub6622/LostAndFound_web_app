@@ -52,7 +52,7 @@ const itemList = ref([]);
 const commentRef = ref(null);
 
 const pushTo = (id) => {
-  router.push({path: "/item/articleMain/" + id});
+  router.push({path: "/item/main/" + id});
 };
 
 const getItemList = async () => {
@@ -69,7 +69,7 @@ const itemDel = async (id) => {
 };
 
 const itemEdit = (id) => {
-  router.push({path: "/item/editArticle/" + id});
+  router.push({path: "/item/editItem/" + id});
 };
 </script>
 

@@ -47,9 +47,7 @@
           </template>
           <el-menu-item-group>
             <el-menu-item v-for="(item, index) in itemList" :key="index">
-              <router-link :to="'/item/main/'+item.id">
-                {{ item.title }}
-              </router-link>
+              <a style="width: 100%;" href="#" @click.prevent="pushTo(item)">{{ item.title }}</a>
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
@@ -73,7 +71,9 @@ const handleClose = (key: string, keyPath: string[]) => {
 };
 const categoryList = ref([]);
 const itemList = ref([]);
-
+const pushTo = (item) => {
+  router.push({path: `/item/main/${item.id}`});
+};
 onMounted(async () => {
   let result = await getCategoryService();
   let result2 = await hotItemService();
@@ -86,8 +86,8 @@ onMounted(async () => {
 .sidebar {
   overflow-y: auto;
   position: fixed;
-  top: 80px;
-  right: 10px;
+  top: 100px;
+  right: 100px;
 }
 a {
   text-decoration: none;

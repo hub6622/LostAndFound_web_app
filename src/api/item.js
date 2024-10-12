@@ -34,9 +34,11 @@ export const addCommentReplyService = (params) => {
 export const addItemService = (params) => {
     return request.post('/item/addItem', params)
 }
-
+export const updateItemService = (params) => {
+    return request.post('/item/updateItem', params)
+}
 // 更新 item 的浏览次数
-export const updateItemService = (itemId) => {
+export const updateItemViewCountService = (itemId) => {
     return request.post('/item/updateItemViewCounts/' + itemId)
 }
 
@@ -58,4 +60,8 @@ export const getItemByUserService = () => {
 // 删除 item
 export const deleteItemService = (itemId) => {
     return request.post('/item/deleteItem', {itemId: itemId})
+}
+
+export const sendContactService = (params)=>{
+    return request.post('/item/sendContact',params)
 }
