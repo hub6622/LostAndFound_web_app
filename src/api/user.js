@@ -30,3 +30,18 @@ export const updateAvatarService = (avatarUrl) => {
     params.append('avatarUrl',avatarUrl);
     return request.patch('/user/updateAvatar',params)
 }
+
+export const getUserNoticeService = () => {
+    return request.get('/user/getNotice')
+}
+
+export const confirmNoticeService = (id) => {
+    return request.post('/user/confirmNotice/'+id)
+}
+
+export const getNoticeHistoryService = () => {
+    return request.get('/user/getNoticeHistory')
+}
+export const changePasswordService = (params)=>{
+    return request.post('/user/changePassword',params)
+}

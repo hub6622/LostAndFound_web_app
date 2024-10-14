@@ -11,11 +11,9 @@
     </el-carousel>
 
     <div>
-
       <div class="item_container lost_items">
         <div>
           <span class="latest-title" style="margin-right: 400px">失物信息</span>
-          <a href="#" style="color: dodgerblue">查看更多</a>
         </div>
         <div v-for="lostItem in displayedLostItems" :key="lostItem.id" class="item_element">
           <a href="#" @click.prevent="pushTo(lostItem)">
@@ -33,7 +31,6 @@
       <div class="item_container found_items">
         <div>
           <span class="latest-title" style="margin-right: 400px">拾得信息</span>
-          <a href="#" style="color: dodgerblue">查看更多</a>
         </div>
         <div v-for="foundItem in displayedFoundItems" :key="foundItem.id" class="item_element">
           <a href="#" @click.prevent="pushTo(foundItem)">

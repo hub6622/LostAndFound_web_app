@@ -1,7 +1,9 @@
 <template>
   <div class="common-layout">
     <el-container class="el_container_b" >
-      <header-vue/>
+      <el-header style="padding: 0 0;">
+        <header-vue/>
+      </el-header>
         <el-main class="el-main">
           <router-view></router-view>
         </el-main>

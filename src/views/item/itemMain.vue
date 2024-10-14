@@ -3,13 +3,12 @@
     <!--  <div class="body">-->
     <h1 class="title">{{ item.title }}</h1>
     <div class="connect_btn">
-      <el-button type="primary" @click="dialogFormVisible = true" style="width: 200px" v-if="isLostOrFound">联系作者
+      <el-button type="primary" @click="dialogFormVisibleSwitch" style="width: 200px" v-if="isLostOrFound">联系作者
       </el-button>
-      <el-button type="primary" @click="dialogFormVisible = true" style="width: 200px" v-else>联系失主</el-button>
+      <el-button type="primary" @click="dialogFormVisibleSwitch" style="width: 200px" v-else>联系失主</el-button>
 
       <el-dialog v-model="dialogFormVisible" title="联系对方信息" width="500">
         <el-form :model="noticeForm">
-          <span>{{ noticeForm.tradeTime }}</span>
           <el-form-item label="选择你的空闲时间" :label-width="'140px'">
             <div class="block">
               <el-date-picker
@@ -19,13 +18,26 @@
               />
             </div>
           </el-form-item>
-          <el-form-item label="您在本站的联系方式">
+          <el-form-item label="请选择或输入联系方式">
             <el-select v-model="noticeForm.contact">
-              <el-option label="手机号" :value="userInfo.phone"/>
-              <el-option label="邮箱" :value="userInfo.email"/>
+              <el-option label="手机号" :value="userInfo.phone">
+                手机号: {{userInfo.phone}}
+              </el-option>
+              <el-option label="邮箱" :value="userInfo.email">
+                邮箱: {{userInfo.email}}
+              </el-option>
+              <el-option label="自定义" value="" disabled>
+                <template #default>
+                  <el-input
+                      v-model="noticeForm.contact"
+                      placeholder="请输入自定义联系方式"
+                      size="small"
+                  />
+                </template>
+              </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="其他联系方式" :label-width="'140px'">
+          <el-form-item label="文字消息" :label-width="'140px'">
             <el-input type="textarea" :rows="5" v-model="noticeForm.content">
             </el-input>
           </el-form-item>
@@ -91,6 +103,7 @@ import {computed, ref, watch} from "vue";
 import commentUserVue from "@/components/commentUser.vue";
 import {useUserInfoStore} from "@/stores/userInfo.js";
 import {useRoute} from "vue-router";
+import router from "@/router/router"
 import {
   itemListByIdService,
   addCommentService,
@@ -108,6 +121,7 @@ interface Item {
   id: number;
   title: string;
   author: {
+    id: number;
     name: string;
     avatar: string;
   };
@@ -142,6 +156,7 @@ const item = ref<Item>({
   id: 0,
   title: "",
   author: {
+    id: 0,
     name: "",
     avatar: "",
   },
@@ -176,6 +191,15 @@ const item = ref<Item>({
   ]
 });
 const dialogFormVisible = ref(false)
+
+const dialogFormVisibleSwitch = ()=>{
+  if(userInfo.value && userInfo.value.phone != null ){
+    dialogFormVisible.value = !dialogFormVisible.value
+  }else {
+    ElMessage.error("未登录，请先登录")
+    router.push('/login')
+  }
+}
 const noticeForm = ref({
   tradeTime: new Date(),
   contact: '',
@@ -221,9 +245,10 @@ const sendContact = async () => {
     content: noticeForm.value.content,
     itemId: item.value.id,
     contact: noticeForm.value.contact,
-    tradeTime: noticeForm.value.tradeTime
+    tradeTime: noticeForm.value.tradeTime,
+    recipientId: item.value.author.id
   });
-
+  ElMessage.success("发送成功")
 }
 watch(() => route.params.itemId, async (newValue, oldValue) => {
   await getItem(newValue);

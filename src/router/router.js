@@ -6,6 +6,7 @@ import itemMain from '@/views/item/itemMain.vue'; // 修改路径
 import addItem from '@/views/item/editItem.vue'; // 修改路径
 import controlItem from '@/views/user/controlItem.vue'; // 修改路径
 import userInfo from '@/views/user/userInfo.vue';
+import userSecurity from '@/views/user/userSecurity.vue'
 
 const routes = [
     { path: '/login', component: LoginVue },
@@ -21,6 +22,7 @@ const routes = [
             { path: '/controlItem', component: controlItem }, // 修改路径
             { path: '/item/editItem/:itemId', component: addItem }, // 修改路径和参数名
             { path: '/userInfo', component: userInfo },
+            { path: '/userSecurity', component: userSecurity },
         ],
     },
 ];
