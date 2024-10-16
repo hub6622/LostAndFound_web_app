@@ -142,7 +142,7 @@ const login = async () => {
   if (result.code === 200){
     ElMessage.success(result ? result.msg : "登录成功")
     tokenStore.setToken(result.data)
-    getUserInfo()
+    await getUserInfo()
     router.push('/')
   }else {
     ElMessage.error(result ? result.msg : "登录失败")

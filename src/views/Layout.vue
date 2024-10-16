@@ -1,12 +1,12 @@
 <template>
   <div class="common-layout">
-    <el-container class="el_container_b" >
+    <el-container class="el_container_b">
       <el-header style="padding: 0 0;">
         <header-vue/>
       </el-header>
-        <el-main class="el-main">
-          <router-view></router-view>
-        </el-main>
+      <el-main class="el-main">
+        <router-view></router-view>
+      </el-main>
       <el-footer>
         <footer-vue/>
       </el-footer>
@@ -49,9 +49,11 @@ watch(() => route.path, (newValue, oldValue) => {
   flex-direction: column;
   background-color: whitesmoke;
 }
- .el_container_b{
-   min-height: 140vh;
- }
+
+.el_container_b {
+  min-height: 140vh;
+}
+
 .common-layout {
   overflow: visible;
   width: 100%;

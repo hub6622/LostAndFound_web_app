@@ -245,7 +245,7 @@ a {
 }
 
 .lost_items {
-  margin-right: 10px;
+  margin-right: 5px;
   background-color: navajowhite;
 }
 .found_items{
