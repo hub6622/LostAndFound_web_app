@@ -1,157 +1,63 @@
 <template>
-  <div class="container">
-    <h2 class="latest-title">最新发布</h2>
-    <el-carousel :interval="4000" type="card" height="300px">
-      <el-carousel-item v-for="item in displayedCarouselItems" :key="item.id">
+  <div>
+    <span v-if="isCategory">
+      分类
+    </span>
+    <div class="item_container">
+      <div v-for="item in paginatedItems" :key="item.id" class="item_element">
         <a href="#" @click.prevent="pushTo(item)">
-          <span class="picHead">{{ item.title }}</span>
-          <img :src="item.picUrl" style="width: 100%"/>
+          <div class="card-content">
+            <span class="card-title">{{ item.title }}</span>
+            <div style="display: flex;flex-wrap: wrap;gap: 5px;margin-top: -5px;margin-bottom: 5px">
+              <el-tag v-for="cate in item.categories" :key="cate" type="success">{{ cate }}</el-tag>
+            </div>
+            <el-image :src="item.picUrl" class="card-image" slot="err" />
+          </div>
+          <div class="card-content-text">
+            &nbsp;&nbsp;&nbsp;&nbsp;{{ truncateContent(item.content, 20) }}
+          </div>
         </a>
-      </el-carousel-item>
-    </el-carousel>
-
-    <div>
-      <div class="item_container lost_items">
-        <div>
-          <span class="latest-title" style="margin-right: 400px">失物信息</span>
-        </div>
-        <div v-for="lostItem in displayedLostItems" :key="lostItem.id" class="item_element">
-          <a href="#" @click.prevent="pushTo(lostItem)">
-            <div class="card-content">
-              <span class="card-title">{{ lostItem.title }}</span>
-              <el-image :src="lostItem.picUrl" class="card-image" slot="err"/>
-            </div>
-            <div class="card-content-text">
-              &nbsp;&nbsp;&nbsp;&nbsp;{{ lostItem.content }}
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <div class="item_container found_items">
-        <div>
-          <span class="latest-title" style="margin-right: 400px">拾得信息</span>
-        </div>
-        <div v-for="foundItem in displayedFoundItems" :key="foundItem.id" class="item_element">
-          <a href="#" @click.prevent="pushTo(foundItem)">
-            <div class="card-content">
-              <span class="card-title">{{ foundItem.title }}</span>
-              <el-image :src="foundItem.picUrl" class="card-image" slot="err"/>
-            </div>
-            <div class="card-content-text">
-              &nbsp;&nbsp;&nbsp;&nbsp;{{ foundItem.content }}
-            </div>
-          </a>
-        </div>
       </div>
     </div>
-    <div style="float: left;margin-left: 245px">
+    <div class="pagination_container">
       <el-pagination
           background
           layout="prev, pager, next"
-          :total="lostItemCount"
-          @current-change="handleLostCurrentChange"
-          :page-size="4"
-          :current-page="lostCurrentPage"
+          :total="itemCount"
+          @current-change="handleCurrentChange"
+          :page-size="8"
+          :current-page="currentPage"
           :hide-on-single-page="hideIsForT"
       />
     </div>
-    <div style="float: right;margin-right: 265px">
-      <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="foundItemCount"
-          @current-change="handleFoundCurrentChange"
-          :page-size="4"
-          :current-page="foundCurrentPage"
-          :hide-on-single-page="hideIsForT"
-      />
-    </div>
-
   </div>
 </template>
 
 <script setup>
-import {ref, computed, watch} from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import router from '@/router/router.js';
-import {useRoute} from 'vue-router';
-import {itemListService, itemListByCategoryService} from '@/api/item.js';
-import {ElMessage} from 'element-plus';
-import pic404 from '@/assets/404pic.jpg';
+import { useRoute } from 'vue-router';
+import {itemListService, itemListByCategoryService, getNewestListService, searchItemService} from '@/api/item.js';
+import { ElMessage } from 'element-plus';
 
 const hideIsForT = ref(false);
-const itemList = ref([
-  {
-    id: 1,
-    title: '标题',
-    content: '内容',
-    picUrl: pic404,
-    category: '类别',
-    createTime: '创建时间',
-    viewCounts: 1,
-    commentCounts: 22,
-    lostOrFound: 2,
-    author: {
-      name: '作者'
-    }
-  }
-]);
+const itemList = ref([]);
+const currentPage = ref(1);
+const itemCount = computed(() => itemList.value.length);
+const isCategory = ref(true);
 
-const foundCurrentPage = ref(1);
-const lostCurrentPage = ref(1);
-
-const displayedCarouselItems = computed(() => {
-  const start = 0;
-  const end = 6;
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * 8;
+  const end = start + 8;
   return itemList.value.slice(start, end);
 });
-// 计算显示的丢失物品项
-const displayedLostItems = computed(() => {
-  const start = (lostCurrentPage.value - 1) * 4;
-  const end = start + 4;
-  return itemList.value.filter(item => item.lostOrFound === 1).slice(start, end);
-});
-
-// 计算显示的找到物品项
-const displayedFoundItems = computed(() => {
-  const start = (foundCurrentPage.value - 1) * 4;
-  const end = start + 4;
-  return itemList.value.filter(item => item.lostOrFound === 0).slice(start, end);
-});
-
-// 计算丢失物品的数量
-const lostItemCount = computed(() => itemList.value.filter(item => item.lostOrFound === 1).length);
-
-// 计算找到物品的数量
-const foundItemCount = computed(() => itemList.value.filter(item => item.lostOrFound === 0).length);
-
 
 const pushTo = (item) => {
-  router.push({path: `/item/main/${item.id}`});
+  router.push({ path: `/item/main/${item.id}` });
 };
 
 const route = useRoute();
 const cate = ref(route.params.cate);
-
-watch(() => route.params.cate, (newCate) => {
-  if (!newCate || newCate === undefined) {
-    getItemList();
-    console.log('ID为空');
-  } else {
-    itemListByCategory(newCate);
-    console.log('ID不为空: ' + newCate);
-  }
-  cate.value = newCate;
-});
-
-const itemListByCategory = async (cate) => {
-  try {
-    const result = await itemListByCategoryService(cate);
-    itemList.value = result.data;
-  } catch (error) {
-    ElMessage.error('加载分类数据失败');
-  }
-};
 
 const getItemList = async () => {
   try {
@@ -159,19 +65,89 @@ const getItemList = async () => {
     itemList.value = result.data;
   } catch (error) {
     ElMessage.error('加载数据失败');
+    console.error('加载数据失败:', error);
   }
 };
 
-const handleLostCurrentChange = (newPage) => {
-  lostCurrentPage.value = newPage;
+const getLost = async () => {
+  await getItemList();
+  const lostItems = itemList.value.filter(item => item.lostOrFound === 1);
+  itemList.value = lostItems;
 };
-const handleFoundCurrentChange = (newPage) => {
-  foundCurrentPage.value = newPage;
+
+const getFound = async () => {
+  await getItemList();
+  const foundItems = itemList.value.filter(item => item.lostOrFound === 0);
+  itemList.value = foundItems;
 };
-getItemList();
+
+const itemListByCategory = async (cate) => {
+  try {
+    const result = await itemListByCategoryService(cate);
+    itemList.value = result.data;
+  } catch (error) {
+    ElMessage.error('加载分类数据失败');
+    console.error('加载分类数据失败:', error);
+  }
+};
+
+const searchItem = async (query) => {
+  try {
+    const params = {
+      category: query.value,
+      title: query.value
+    }
+    const result = await searchItemService(params);
+    itemList.value = result.data;
+  } catch (error) {
+    ElMessage.error('搜索数据失败');
+    console.error('搜索数据失败:', error);
+  }
+};
+const handleCurrentChange = (newPage) => {
+  currentPage.value = newPage;
+};
+
+const loadItemsByCategory = async (category) => {
+  if (category === '失物') {
+    isCategory.value = false;
+    await getLost();
+  } else if (category === '招领') {
+    isCategory.value = false;
+    await getFound();
+  } else if (category === '最新') {
+    isCategory.value = false;
+    await getItemList();
+  } else {
+    isCategory.value = true;
+    await itemListByCategory(category);
+  }
+};
+
+watch(() => route.params.cate, (newCate) => {
+  cate.value = newCate;
+
+  if (route.path.startsWith('/item/search/')) {
+    searchItem(cate);
+  } else {
+    loadItemsByCategory(newCate);
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  loadItemsByCategory(cate.value);
+});
+
+const truncateContent = (content, maxLength) => {
+  if (content.length > maxLength) {
+    return content.slice(0, maxLength) + '...';
+  }
+  return content;
+};
 </script>
 
 <style scoped>
+/* 保留原有样式 */
 .item_element {
   width: 300px;
   height: 350px;
@@ -180,6 +156,7 @@ getItemList();
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
+  margin: 0px; /* 添加间距 */
 }
 
 .item_element:hover {
@@ -234,12 +211,8 @@ a {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  height: 800px;
-  width: 640px;
-  float: left;
   gap: 20px;
   margin-top: 25px;
-  border-radius: 8px;
   padding-top: 20px;
   padding-bottom: 10px;
 }
@@ -248,9 +221,11 @@ a {
   margin-right: 5px;
   background-color: navajowhite;
 }
-.found_items{
+
+.found_items {
   background-color: antiquewhite;
 }
+
 .item_element:hover {
   transform: translateY(-10px);
 }
@@ -285,20 +260,20 @@ a {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .item_element {
-    width: 460px; /* 宽度调整为适合平板设备 */
+    width: 48%; /* 平板设备上每行两个物品 */
     height: 400px;
   }
 }
 
 @media (max-width: 480px) {
   .item_element {
-    width: 100%; /* 宽度调整为适合手机设备 */
+    width: 100%; /* 手机设备上每行一个物品 */
     height: 400px;
   }
 }
 
 /* 分页器样式 */
-.el-pagination {
+.pagination_container {
   display: flex;
   justify-content: center;
   margin-top: 20px;

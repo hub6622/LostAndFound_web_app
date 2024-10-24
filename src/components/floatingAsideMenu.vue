@@ -32,9 +32,7 @@
           <el-menu-item-group>
             <template #title><span>语言</span></template>
             <el-menu-item v-for="(item, index) in categoryList" :key="index">
-              <router-link :to="'/item/category/'+item">
-                {{ item }}
-              </router-link>
+              <a @click="router.push('/item/category/'+item)">{{ item }}</a>
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>
@@ -46,7 +44,7 @@
             <span>失物推荐</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item v-for="(item, index) in itemList" :key="index">
+            <el-menu-item v-for="(item, index) in randomItemList" :key="index">
               <a style="width: 100%;" href="#" @click.prevent="pushTo(item)">{{ item.title }}</a>
             </el-menu-item>
           </el-menu-item-group>
@@ -57,9 +55,9 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, onMounted} from 'vue';
-import {HomeFilled, Document, Menu as IconMenu, Location, Setting} from '@element-plus/icons-vue';
-import {getCategoryService, hotItemService} from '@/api/item';
+import { reactive, ref, onMounted } from 'vue';
+import { HomeFilled, Document, Menu as IconMenu, Location, Setting } from '@element-plus/icons-vue';
+import { getCategoryService, hotItemService } from '@/api/item';
 import router from '@/router/router.js';
 
 const isCollapse = ref(false);
@@ -71,14 +69,27 @@ const handleClose = (key: string, keyPath: string[]) => {
 };
 const categoryList = ref([]);
 const itemList = ref([]);
+const randomItemList = ref([]);
+
 const pushTo = (item) => {
-  router.push({path: `/item/main/${item.id}`});
+  router.push({ path: `/item/main/${item.id}` });
 };
+
+const getRandomItems = (items: any[], count: number): any[] => {
+  const shuffled = items.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 onMounted(async () => {
-  let result = await getCategoryService();
-  let result2 = await hotItemService();
-  itemList.value = result2.data;
-  categoryList.value = result.data;
+  try {
+    const result = await getCategoryService();
+    const result2 = await hotItemService();
+    itemList.value = result2.data;
+    categoryList.value = result.data;
+    randomItemList.value = getRandomItems(itemList.value, 6);
+  } catch (error) {
+    console.error('加载数据失败:', error);
+  }
 });
 </script>
 

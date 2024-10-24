@@ -65,3 +65,14 @@ export const deleteItemService = (itemId) => {
 export const sendContactService = (params)=>{
     return request.post('/item/sendContact',params)
 }
+export const getNewestListService = ()=>{
+    return request.get('/item/newestList')
+}
+
+export const searchItemService = (params)=>{
+    return request({
+        url:"/item/getItemByParams",
+        method:"get",
+        params
+    })
+}
