@@ -27,8 +27,8 @@
             <el-form-item prop="gender">
               <span>性别:</span>
               <el-select v-model="userInfo.sex" placeholder="请选择">
-                <el-option label="男" value="1"></el-option>
-                <el-option label="女" value="0"></el-option>
+                <el-option label="男" :value="1"></el-option>
+                <el-option label="女" :value="0"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item prop="email">

@@ -9,7 +9,13 @@
       <el-table :data="itemList" style="width: 100%">
         <el-table-column prop="title" label="标题" width="250"/>
         <el-table-column prop="author.name" label="作者" width="100"/>
-        <el-table-column prop="category" label="类别" width="100"/>
+        <el-table-column prop="categories" label="分类" align="center">
+          <template v-slot="scope">
+            <el-tag v-for="category in scope.row.categories" :key="category" style="margin-right: 5px;">
+              {{ category }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="viewCounts" label="浏览量" width="100"/>
         <el-table-column prop="commentCounts" label="评论量" width="100"/>
         <el-table-column prop="createTime" label="发布时间"/>
@@ -62,7 +68,8 @@ const getItemList = async () => {
 getItemList();
 
 const itemDel = async (id) => {
-  await deleteItemService(id);
+
+  await deleteItemService([id]);
   ElMessage.success("删除成功");
   await getItemList();
   await commentRef.value.getCommentList();

@@ -92,6 +92,7 @@ const addCommentReply = async () => {
   ElMessage.success("回复成功")
   emit('updateReply')
   replyShowFun()
+  replyContent.value = ''
 }
 </script>
 

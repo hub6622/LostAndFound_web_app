@@ -44,7 +44,7 @@ export const updateItemViewCountService = (itemId) => {
 
 // 获取所有分类
 export const getCategoryService = () => {
-    return request.get('/item/getCategory')
+    return request.get('/admin/getCategory')
 }
 
 // 获取热门 item
@@ -58,8 +58,8 @@ export const getItemByUserService = () => {
 }
 
 // 删除 item
-export const deleteItemService = (itemId) => {
-    return request.post('/item/deleteItem', {itemId: itemId})
+export const deleteItemService = (ids) => {
+    return request.post('/item/deleteItem', ids)
 }
 
 export const sendContactService = (params)=>{

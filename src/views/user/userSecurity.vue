@@ -86,14 +86,14 @@ const confirmRealPass = async (rule, value, callback) => {
 }
 const rules = reactive<FormRules>({
   password: [
-    {asyncValidator: confirmRealPass, trigger: 'blur', required: false}
+    {asyncValidator: confirmRealPass, trigger: 'blur', required: true}
   ],
   newPassword: [
-    {required: false, message: '请输入新密码', trigger: 'blur'},
+    {required: true, message: '请输入新密码', trigger: 'blur'},
     {min: 8, max: 16, message: '请输入8-16位密码', trigger: 'blur'},
   ],
   reNewPassword: [
-    {validator: confirmRePass, trigger: 'blur', required: false}
+    {validator: confirmRePass, trigger: 'blur', required: true}
   ]
 })
 const changePassword = async () => {

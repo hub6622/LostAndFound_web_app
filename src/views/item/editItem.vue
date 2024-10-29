@@ -3,8 +3,8 @@
     <span style="font-size: 29px">请输入标题</span>
     <el-input v-model="item.title" placeholder="请输入文章标题" class="input-title"></el-input>
     <span style="font-size: 29px">物品种类</span>
-    <el-select v-model="item.category" placeholder="Select" class="input-title">
-      <el-option v-for="item in categoryList" :key="item" :label="item" :value="item"/>
+    <el-select v-model="item.categories" multiple placeholder="请选择分类" class="input-title">
+      <el-option v-for="category in categoryList" :key="category.id" :label="category.categoryName" :value="category.categoryName"/>
     </el-select>
     <span style="font-size: 29px">失拾情况</span>
     <el-select v-model="item.lostOrFound" style="display: block" placeholder="Select" class="input-title">
@@ -52,22 +52,27 @@ const tokenStore = useTokenStore()
 interface Item {
   id: number;
   title: string;
-  category: string;
+  categories: string[];
   content: string;
   picUrl: string;
   lostOrFound: number
 }
-
+interface CategoryData {
+  id: number
+  categoryName: string
+  updateTime: string
+  createTime: string
+}
 const item = ref<Item>({
   id: 0,
   title: '',
-  category: '',
+  categories: [],
   content: '',
   picUrl: '#',
   lostOrFound: 1
 })
 const isAddItem = ref(true)
-const categoryList = ref([])
+const categoryList = ref<CategoryData[]>([])
 const isLostOrFound = ref(false)
 const token = ref(tokenStore.token)
 const getCategory = async () => {
@@ -89,7 +94,7 @@ watch(() => route.path, (newValue, oldValue) => {
     item.value = {
       id: 0,
       title: '',
-      category: '',
+      categories: [],
       content: '',
       picUrl: '#',
       lostOrFound: 1
@@ -111,7 +116,7 @@ const resetForm = () => {
   item.value = {
     id: 0,
     title: '',
-    category: '',
+    categories: [],
     content: '',
     picUrl: '#',
     lostOrFound: 1

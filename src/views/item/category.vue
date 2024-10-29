@@ -1,8 +1,8 @@
 <template>
   <div>
-    <span v-if="isCategory">
-      分类
-    </span>
+<!--    <span v-if="isCategory">-->
+<!--      分类-->
+<!--    </span>-->
     <div class="item_container">
       <div v-for="item in paginatedItems" :key="item.id" class="item_element">
         <a href="#" @click.prevent="pushTo(item)">
@@ -171,7 +171,7 @@ const truncateContent = (content, maxLength) => {
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 8px;
 }

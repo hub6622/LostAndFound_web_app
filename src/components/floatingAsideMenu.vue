@@ -32,7 +32,7 @@
           <el-menu-item-group>
             <template #title><span>语言</span></template>
             <el-menu-item v-for="(item, index) in categoryList" :key="index">
-              <a @click="router.push('/item/category/'+item)">{{ item }}</a>
+              <a @click="router.push('/item/category/'+item.categoryName)">{{ item.categoryName }}</a>
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>

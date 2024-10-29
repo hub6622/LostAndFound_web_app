@@ -5,7 +5,7 @@
       <el-carousel-item v-for="item in displayedCarouselItems" :key="item.id">
         <a href="#" @click.prevent="pushTo(item)">
           <span class="picHead">{{ item.title }}</span>
-          <img :src="item.picUrl" style="width: 100%"/>
+          <img :src="item.picUrl" style="width: 100%;"/>
         </a>
       </el-carousel-item>
     </el-carousel>
@@ -207,7 +207,7 @@ getItemList();
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 8px;
 }

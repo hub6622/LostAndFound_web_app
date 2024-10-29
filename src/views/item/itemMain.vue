@@ -76,7 +76,7 @@
     </div>
     <div style="width: 1000px;margin-bottom: 450px">
       <div style="float: left;padding-bottom: 20px;">
-        <el-image :src="item.picUrl" style="width: 400px;height: 400px" :preview-src-list="[item.picUrl]"/>
+        <el-image :src="item.picUrl" style="width: 400px;height: 400px" :preview-src-list="[item.picUrl]" hide-on-click-modal/>
       </div>
       <div class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ item.content }}</div>
     </div>
@@ -194,7 +194,11 @@ const dialogFormVisible = ref(false)
 
 const dialogFormVisibleSwitch = ()=>{
   if(userInfo.value && userInfo.value.phone != null ){
-    dialogFormVisible.value = !dialogFormVisible.value
+    if(userInfo.value.name!=item.value.author.name){
+      dialogFormVisible.value = !dialogFormVisible.value
+    }else {
+      ElMessage.error("不能联系自己哦")
+    }
   }else {
     ElMessage.error("未登录，请先登录")
     router.push('/login')
@@ -260,6 +264,7 @@ watch(() => route.params.itemId, async (newValue, oldValue) => {
 .container {
   width: 1000px;
   margin: -50px auto;
+  margin-bottom: 100px;
 }
 
 .author {
