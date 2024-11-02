@@ -39,7 +39,7 @@
         </el-badge>
       </template>
       <el-button @click="showHistoryDialog">历史通知</el-button>
-      <notice-item-vue v-for="notice in noticeItem" :key="notice.id" :notice="notice"/>
+      <notice-item-vue v-for="notice in noticeItem" :key="notice.id" :notice="notice" @child-event="getNotice" />
     </el-popover>
 
 
@@ -77,6 +77,7 @@ interface NoticeItem {
     avatar: string
     sex: number
   }
+  recipientId:number
 }
 const userInfo = ref<UserInfo>({
   name: '',

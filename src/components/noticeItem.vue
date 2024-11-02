@@ -1,9 +1,9 @@
 <template>
   <div
       class="notice-container"
+      :class="{ 'system-notice': isSystemNotice }"
   >
     <el-avatar
-        v-if="true"
         :size="50"
         :src="notice.author.avatar"
         class="notice-container-avatar"
@@ -18,8 +18,9 @@
               ref="titleRef"
               class="notice-title-content"
           >
-            <span style="font-weight: bold">{{ notice.author.name }}</span><span
-              style="margin-left: 10px">联系了您</span>
+            <span style="font-weight: bold">{{ notice.author.name }}</span>
+            <span v-if="isSystemNotice" style="font-weight: bold;margin-left: 10px">系统通知</span>
+            <span v-else style="margin-left: 10px">联系了您</span>
           </div>
         </el-tooltip>
       </div>
@@ -27,6 +28,7 @@
         <el-tooltip
             :disabled="true"
             popper-class="notice-title-popper"
+            v-if="!isSystemNotice"
         >
           <div
               ref="titleRef"
@@ -35,7 +37,6 @@
             联系方式: {{ notice.contact }}
           </div>
         </el-tooltip>
-
       </div>
       <el-tooltip
           popper-class="notice-title-popper"
@@ -49,57 +50,63 @@
         </div>
       </el-tooltip>
       <div class="notice-text-datetime">
-        <span>交易时间: {{ notice.tradeTime }}</span>
+        <span v-if="!isSystemNotice">交易时间: {{ notice.tradeTime }}</span>
       </div>
-      <div class="notice-text-datetime">
-        <span>回复时间: {{ notice.updateTime }}</span>
+      <div v-if="isSystemNotice" class="notice-text-datetime">
+        <span>通知时间: {{ notice.updateTime }}</span>
       </div>
     </div>
   </div>
-  <div style="float: right;margin-top: 50px">
-    <div>
-      <el-button type="primary" @click="confirmNotice(notice.id)" v-if="notice.confirm===0">
-        同意
-      </el-button>
-    </div>
-    <div style="margin-top: 10px">
+  <div style="float: right;margin-top: 20px">
+    <div v-if="!isSystemNotice">
       <el-button @click="pushTo(notice.itemId)">
         发布详情
+      </el-button>
+    </div>
+    <div style="margin-top: 10px;">
+      <el-button type="primary" @click="confirmNotice(notice.id)" v-if="notice.confirm === 0">
+        确认
       </el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import {ElDatePicker, ElMessage} from "element-plus";
-import router from "@/router/router"
-import {confirmNoticeService} from "@/api/user"
+import { ref, computed } from "vue";
+import { ElDatePicker, ElMessage } from "element-plus";
+import router from "@/router/router";
+import { confirmNoticeService } from "@/api/user";
+
 interface NoticeItem {
-  id: number,
-  content: string,
-  itemId: number,
-  tradeTime: string,
-  updateTime: string,
-  contact: string,
-  confirm: number,
+  id: number;
+  content: string;
+  itemId: number;
+  tradeTime: string;
+  updateTime: string;
+  contact: string;
+  confirm: number;
   author: {
-    id: number,
-    name: string,
-    avatar: string,
-    sex: number
-  }
+    id: number;
+    name: string;
+    avatar: string;
+    sex: number;
+  };
+  recipientId: number;
 }
+const emit = defineEmits(['child-event']);
+const props = defineProps<{ notice: NoticeItem }>();
 
-defineProps<{ notice: NoticeItem }>()
-const confirmNotice = async (id) => {
-  await confirmNoticeService(id)
-  ElMessage.success("已同意")
-}
-const pushTo = (id) => {
-  router.push({path: `/item/main/${id}`})
-}
+const isSystemNotice = computed(() => props.notice.recipientId === 0);
 
+const confirmNotice = async (id: number) => {
+  await confirmNoticeService(id);
+  emit('child-event')
+  ElMessage.success("已同意");
+};
+
+const pushTo = (id: number) => {
+  router.push({ path: `/item/main/${id}` });
+};
 </script>
 
 <style scoped lang="scss">
@@ -110,6 +117,7 @@ const pushTo = (id) => {
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid burlywood;
+
 
   .notice-container-avatar {
     margin-right: 10px;
