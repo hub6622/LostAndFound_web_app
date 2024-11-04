@@ -35,8 +35,8 @@ export const getUserNoticeService = () => {
     return request.get('/user/getNotice')
 }
 
-export const confirmNoticeService = (id) => {
-    return request.post('/user/confirmNotice/'+id)
+export const confirmNoticeService = (params) => {
+    return request.post('/user/confirmNotice',params);
 }
 
 export const getNoticeHistoryService = () => {

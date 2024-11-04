@@ -28,7 +28,7 @@
         <el-tooltip
             :disabled="true"
             popper-class="notice-title-popper"
-            v-if="!isSystemNotice"
+            v-if="!isSystemNotice && notice.contact"
         >
           <div
               ref="titleRef"
@@ -50,32 +50,72 @@
         </div>
       </el-tooltip>
       <div class="notice-text-datetime">
-        <span v-if="!isSystemNotice">交易时间: {{ notice.tradeTime }}</span>
+        <span v-if="!isSystemNotice && notice.tradeTime">交易时间: {{ notice.tradeTime }}</span>
       </div>
-      <div v-if="isSystemNotice" class="notice-text-datetime">
-        <span>通知时间: {{ notice.updateTime }}</span>
+      <div class="notice-text-datetime">
+        <span>发送时间: {{ notice.updateTime }}</span>
       </div>
     </div>
-  </div>
-  <div style="float: right;margin-top: 20px">
-    <div v-if="!isSystemNotice">
-      <el-button @click="pushTo(notice.itemId)">
+    <div class="button-container">
+      <el-button type="danger" v-if="(!isSystemNotice) && (notice.confirm === 0)" @click="dialogFormVisibleSwitch_2">
+        时间再议
+      </el-button>
+      <el-button v-if="!isSystemNotice" @click="pushTo(notice.itemId)">
         发布详情
       </el-button>
-    </div>
-    <div style="margin-top: 10px;">
-      <el-button type="primary" @click="confirmNotice(notice.id)" v-if="notice.confirm === 0">
+      <el-button type="primary" @click="confirmNotice(notice)" v-if="notice.confirm != 1">
         确认
       </el-button>
     </div>
   </div>
+
+  <el-dialog
+      v-model="dialogFormVisible_2"
+      title="时间再议"
+      width="500"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      append-to-body
+  >
+    <el-form :model="noticeForm_2">
+      <el-form-item label="选择你的空闲时间" :label-width="'140px'">
+        <el-date-picker
+            v-model="noticeForm_2.tradeTime"
+            type="datetime"
+            placeholder="Select date and time"
+        />
+      </el-form-item>
+      <el-form-item label="请选择或输入联系方式">
+          <el-input
+              v-model="noticeForm_2.contact"
+              placeholder="请输入联系方式"
+              size="small"
+          />
+      </el-form-item>
+      <el-form-item label="文字消息" :label-width="'140px'">
+        <el-input type="textarea" :rows="5" v-model="noticeForm_2.content">
+        </el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogFormVisible_2 = false">取消</el-button>
+        <el-button type="primary" @click="sendContact_2">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { ElDatePicker, ElMessage } from "element-plus";
+import {ref, computed} from "vue";
+import {ElDatePicker, ElInput, ElMessage} from "element-plus";
 import router from "@/router/router";
-import { confirmNoticeService } from "@/api/user";
+import {confirmNoticeService} from "@/api/user";
+import {sendContactService} from "@/api/item";
+
+const dialogFormVisible_2 = ref(false);
 
 interface NoticeItem {
   id: number;
@@ -93,19 +133,61 @@ interface NoticeItem {
   };
   recipientId: number;
 }
+
 const emit = defineEmits(['child-event']);
 const props = defineProps<{ notice: NoticeItem }>();
 
 const isSystemNotice = computed(() => props.notice.recipientId === 0);
 
-const confirmNotice = async (id: number) => {
-  await confirmNoticeService(id);
-  emit('child-event')
+const confirmNotice = async () => {
+  await confirmNoticeService({
+    id: props.notice.id,
+    itemId: props.notice.itemId,
+    tradeTime: props.notice.tradeTime,
+    updateTime: props.notice.updateTime,
+    contact: props.notice.contact,
+    confirm: props.notice.confirm,
+    authorId: props.notice.author.id,
+    recipientId: props.notice.recipientId,
+  });
+  emit('child-event');
   ElMessage.success("已同意");
 };
 
 const pushTo = (id: number) => {
-  router.push({ path: `/item/main/${id}` });
+  router.push({path: `/item/main/${id}`});
+};
+
+const changeMeetTime = () => {
+  alert('暂未开放');
+};
+
+const noticeForm_2 = ref({
+  tradeTime: new Date(),
+  content: '这个时间我没空，你看看这个时间行不行',
+  contact: '',
+});
+
+const sendContact_2 = async () => {
+  dialogFormVisible_2.value = false;
+  await sendContactService({
+    content: noticeForm_2.value.content,
+    itemId: props.notice.itemId,
+    tradeTime: noticeForm_2.value.tradeTime,
+    recipientId: props.notice.author.id,
+    contact: noticeForm_2.value.contact,
+  });
+  await confirmNoticeService(
+  {
+    id: props.notice.id,
+    confirm: 2,
+  });
+  emit('child-event');
+  ElMessage.success("发送成功");
+};
+
+const dialogFormVisibleSwitch_2 = () => {
+  dialogFormVisible_2.value = !dialogFormVisible_2.value;
 };
 </script>
 
@@ -117,7 +199,6 @@ const pushTo = (id: number) => {
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid burlywood;
-
 
   .notice-container-avatar {
     margin-right: 10px;
@@ -171,6 +252,18 @@ const pushTo = (id: number) => {
 
     .notice-text-datetime {
       margin-top: 4px;
+    }
+  }
+
+  .button-container {
+    float: right;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .el-button + .el-button {
+      margin-top: 10px;
     }
   }
 }
