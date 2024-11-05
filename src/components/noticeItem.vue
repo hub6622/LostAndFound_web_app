@@ -26,9 +26,10 @@
       </div>
       <div class="notice-text-title">
         <el-tooltip
-            :disabled="true"
+            :disabled="false"
             popper-class="notice-title-popper"
             v-if="!isSystemNotice && notice.contact"
+            :content="notice.contact"
         >
           <div
               ref="titleRef"
@@ -40,7 +41,8 @@
       </div>
       <el-tooltip
           popper-class="notice-title-popper"
-          :disabled="true"
+          :disabled="false"
+          :content="notice.content"
       >
         <div
             ref="descriptionRef"
