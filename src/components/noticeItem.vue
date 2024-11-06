@@ -65,7 +65,7 @@
       <el-button v-if="!isSystemNotice" @click="pushTo(notice.itemId)">
         发布详情
       </el-button>
-      <el-button type="primary" @click="confirmNotice(notice)" v-if="notice.confirm != 1">
+      <el-button type="primary" @click="confirmNotice(notice)" v-if="notice.confirm != 1 && isSystemNotice">
         确认
       </el-button>
     </div>
@@ -88,11 +88,11 @@
         />
       </el-form-item>
       <el-form-item label="请选择或输入联系方式">
-          <el-input
-              v-model="noticeForm_2.contact"
-              placeholder="请输入联系方式"
-              size="small"
-          />
+        <el-input
+            v-model="noticeForm_2.contact"
+            placeholder="请输入联系方式"
+            size="small"
+        />
       </el-form-item>
       <el-form-item label="文字消息" :label-width="'140px'">
         <el-input type="textarea" :rows="5" v-model="noticeForm_2.content">
@@ -110,12 +110,13 @@
   </el-dialog>
 </template>
 
+
 <script setup lang="ts">
-import {ref, computed} from "vue";
-import {ElDatePicker, ElInput, ElMessage} from "element-plus";
+import { ref, computed } from "vue";
+import { ElDatePicker, ElInput, ElMessage } from "element-plus";
 import router from "@/router/router";
-import {confirmNoticeService} from "@/api/user";
-import {sendContactService} from "@/api/item";
+import { confirmNoticeService } from "@/api/user";
+import { sendContactService } from "@/api/item";
 
 const dialogFormVisible_2 = ref(false);
 
@@ -127,6 +128,7 @@ interface NoticeItem {
   updateTime: string;
   contact: string;
   confirm: number;
+  system: number; // 新增字段
   author: {
     id: number;
     name: string;
@@ -139,25 +141,33 @@ interface NoticeItem {
 const emit = defineEmits(['child-event']);
 const props = defineProps<{ notice: NoticeItem }>();
 
-const isSystemNotice = computed(() => props.notice.recipientId === 0);
+const isSystemNotice = computed(() => props.notice.system === 1);
 
 const confirmNotice = async () => {
-  await confirmNoticeService({
-    id: props.notice.id,
-    itemId: props.notice.itemId,
-    tradeTime: props.notice.tradeTime,
-    updateTime: props.notice.updateTime,
-    contact: props.notice.contact,
-    confirm: props.notice.confirm,
-    authorId: props.notice.author.id,
-    recipientId: props.notice.recipientId,
-  });
+  if (!isSystemNotice.value){
+    await confirmNoticeService({
+      id: props.notice.id,
+      itemId: props.notice.itemId,
+      tradeTime: props.notice.tradeTime,
+      updateTime: props.notice.updateTime,
+      contact: props.notice.contact,
+      confirm: props.notice.confirm,
+      authorId: props.notice.author.id,
+      recipientId: props.notice.recipientId,
+    });
+  }else {
+    await confirmNoticeService({
+      id: props.notice.id,
+      confirm: 2,
+    });
+  }
+
   emit('child-event');
   ElMessage.success("已同意");
 };
 
 const pushTo = (id: number) => {
-  router.push({path: `/item/main/${id}`});
+  router.push({ path: `/item/main/${id}` });
 };
 
 const changeMeetTime = () => {
@@ -171,6 +181,7 @@ const noticeForm_2 = ref({
 });
 
 const sendContact_2 = async () => {
+  if (isSystemNotice.value) return; // 如果是系统通知，直接返回
   dialogFormVisible_2.value = false;
   await sendContactService({
     content: noticeForm_2.value.content,
@@ -179,8 +190,7 @@ const sendContact_2 = async () => {
     recipientId: props.notice.author.id,
     contact: noticeForm_2.value.contact,
   });
-  await confirmNoticeService(
-  {
+  await confirmNoticeService({
     id: props.notice.id,
     confirm: 2,
   });

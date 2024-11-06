@@ -71,6 +71,7 @@ interface NoticeItem {
   updateTime: string
   contact: string
   confirm: number
+  system: number
   author: {
     id: number
     name: string
