@@ -18,4 +18,23 @@ body{position: absolute;}
 *{
   position: absolute;
 }
+/* 在全局样式文件中添加 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: Arial, sans-serif;
+  color: #5e606f;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+
 </style>

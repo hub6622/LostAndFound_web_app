@@ -42,9 +42,9 @@ watch(() => route.path, (newValue, oldValue) => {
 .el-main {
   box-sizing: border-box;
   overflow: visible;
-  width: calc(100% - 700px);
-  margin-left: 300px;
-  margin-top: 20px;
+  width: 74%;
+  margin-left: 10%;
+  margin-top: 1%;
   display: flex;
   flex-direction: column;
   background-color: whitesmoke;
@@ -71,26 +71,8 @@ watch(() => route.path, (newValue, oldValue) => {
   background-color: #545c64;
   height: 60px; /* 固定高度 */
 }
-
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .align-container {
-    width: 100%;
-    margin-left: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .align-container {
-    flex-direction: column;
-    margin-left: 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .align-container {
-    flex-direction: column;
-    margin-left: 0;
-  }
+.float-right {
+  width: 31vh;
+  height: auto;
 }
 </style>

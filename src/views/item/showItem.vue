@@ -10,7 +10,7 @@
       </el-carousel-item>
     </el-carousel>
 
-    <div class="222">
+    <div class="item_show">
       <div class="item_container lost_items">
         <div>
           <span class="latest-title" style="margin-right: 400px">失物信息</span>
@@ -53,27 +53,29 @@
         </div>
       </div>
     </div>
-    <div style="float: left;margin-left: 245px">
-      <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="lostItemCount"
-          @current-change="handleLostCurrentChange"
-          :page-size="4"
-          :current-page="lostCurrentPage"
-          :hide-on-single-page="hideIsForT"
-      />
-    </div>
-    <div style="float: right;margin-right: 265px">
-      <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="foundItemCount"
-          @current-change="handleFoundCurrentChange"
-          :page-size="4"
-          :current-page="foundCurrentPage"
-          :hide-on-single-page="hideIsForT"
-      />
+    <div>
+      <div style="float: left;margin-left: 245px">
+        <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="lostItemCount"
+            @current-change="handleLostCurrentChange"
+            :page-size="4"
+            :current-page="lostCurrentPage"
+            :hide-on-single-page="hideIsForT"
+        />
+      </div>
+      <div style="float: right;margin-right: 265px">
+        <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="foundItemCount"
+            @current-change="handleFoundCurrentChange"
+            :page-size="4"
+            :current-page="foundCurrentPage"
+            :hide-on-single-page="hideIsForT"
+        />
+      </div>
     </div>
 
   </div>
@@ -186,8 +188,8 @@ getItemList();
 
 <style scoped>
 .item_element {
-  width: 300px;
-  height: 350px;
+  width: 46%;
+  height: 44%;
   background-color: whitesmoke;
   border-radius: 8px;
   overflow: hidden;
@@ -214,14 +216,14 @@ getItemList();
 
 .card-image {
   width: 100%;
-  height: 200px; /* 固定高度 */
+  height: 280px; /* 固定高度 */
   object-fit: cover;
   border-radius: 10px;
 }
 
 .card-content-text {
-  height: 75px;
-  width: 260px;
+  height: 65px;
+  width: 85%;
   font-size: 14px;
   color: #666;
   padding-left: 15px;
@@ -247,8 +249,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  height: 800px;
-  width: 640px;
+  width: 49%;
   float: left;
   gap: 20px;
   margin-top: 25px;
@@ -267,7 +268,6 @@ a {
 .item_element:hover {
   transform: translateY(-10px);
 }
-
 .picHead {
   font-size: 20px;
   color: #fff;

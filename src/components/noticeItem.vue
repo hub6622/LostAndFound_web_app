@@ -65,7 +65,7 @@
       <el-button v-if="!isSystemNotice" @click="pushTo(notice.itemId)">
         发布详情
       </el-button>
-      <el-button type="primary" @click="confirmNotice(notice)" v-if="notice.confirm != 1 && isSystemNotice">
+      <el-button type="primary" @click="confirmNotice(notice)" v-if="notice.confirm != 1">
         确认
       </el-button>
     </div>
@@ -170,9 +170,6 @@ const pushTo = (id: number) => {
   router.push({ path: `/item/main/${id}` });
 };
 
-const changeMeetTime = () => {
-  alert('暂未开放');
-};
 
 const noticeForm_2 = ref({
   tradeTime: new Date(),
