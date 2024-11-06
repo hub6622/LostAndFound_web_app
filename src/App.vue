@@ -6,7 +6,7 @@
 
 </script>
 
-<style scoped>
+<style>
 body {
   background-color: #f5f5f5;
   font-weight: 400;

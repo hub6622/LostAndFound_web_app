@@ -18,7 +18,7 @@
         <a href="https://github.com/hub6622/LostAndFound_web_app" target="_blank">关于本站</a>
       </el-menu-item>
       <div class="right-aligned-container">
-        <el-menu-item index="7" v-if="isAdmin()"><a target="_blank" href="http://localhost:3333" style="color: whitesmoke">管理员页面</a></el-menu-item>
+        <el-menu-item index="7" v-if="isAdmin()"><a target="_blank" href="http://120.26.93.27/:3333" style="color: whitesmoke">管理员页面</a></el-menu-item>
         <el-menu-item index="8">
           <el-input
               v-model="searchTitle"

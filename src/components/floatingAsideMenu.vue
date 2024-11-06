@@ -98,7 +98,7 @@ onMounted(async () => {
   overflow-y: auto;
   position: fixed;
   top: 10%;
-  right: -1%;
+  left: 84%;
 }
 a {
   text-decoration: none;
