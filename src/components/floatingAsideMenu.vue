@@ -97,8 +97,8 @@ onMounted(async () => {
 .sidebar {
   overflow-y: auto;
   position: fixed;
-  top: 10vh;
-  right: 1vh;
+  top: 10%;
+  right: -1%;
 }
 a {
   text-decoration: none;

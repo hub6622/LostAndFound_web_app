@@ -72,7 +72,7 @@ watch(() => route.path, (newValue, oldValue) => {
   height: 60px; /* 固定高度 */
 }
 .float-right {
-  width: 31vh;
+  width: 17%;
   height: auto;
 }
 </style>

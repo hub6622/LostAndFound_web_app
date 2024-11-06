@@ -208,6 +208,11 @@ getItemList();
   padding: 16px;
 }
 
+.item_show{
+  height: 1000px;
+  float: none;
+}
+
 .card-title {
   font-size: 16px;
   font-weight: bold;
@@ -250,6 +255,7 @@ a {
   flex-wrap: wrap;
   justify-content: center;
   width: 49%;
+  height: 100%;
   float: left;
   gap: 20px;
   margin-top: 25px;
