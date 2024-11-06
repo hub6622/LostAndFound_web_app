@@ -6,7 +6,7 @@
 
 </script>
 
-<style>
+<style scoped>
 body {
   background-color: #f5f5f5;
   font-weight: 400;
@@ -35,6 +35,5 @@ a {
   text-decoration: none;
   color: inherit;
 }
-
 
 </style>
