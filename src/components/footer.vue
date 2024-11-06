@@ -1,6 +1,6 @@
 <template>
     <div class="footer">
-      Pblog ©2024 Created by PPG
+      LostAndFound ©2024 Created by PPG
     </div>
 </template>
 

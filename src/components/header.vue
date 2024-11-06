@@ -10,7 +10,7 @@
         active-text-color="#00BFFF"
     >
       <el-menu-item index="1" @click="router.push('/item/showItem')">首页</el-menu-item>
-      <el-menu-item index="2"><router-link :to="'/controlItem'">我的发布</router-link></el-menu-item>
+      <el-menu-item index="2" @click="pushTo('/controlItem')">我的发布</el-menu-item>
       <el-menu-item index="3" @click="pushTo('/item/addItem')">发布</el-menu-item>
       <el-menu-item index="4" @click="router.push('/item/category/失物')">全部失物</el-menu-item>
       <el-menu-item index="5" @click="router.push('/item/category/招领')">全部拾得</el-menu-item>
