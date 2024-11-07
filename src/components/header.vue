@@ -94,6 +94,7 @@ const handleSearch = () => {
   if (searchTitle.value.trim() !== '') {
     router.push({ path: '/item/search/' + searchTitle.value });
   } else {
+    router.push({path: '/item/showItem'})
     ElMessage.warning('请输入搜索内容');
   }
 };
