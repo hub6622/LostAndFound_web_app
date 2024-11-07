@@ -146,6 +146,7 @@ const changeUserInfo = async () => {
   });
   const result = await userInfoService()
   userInfoStore.setInfo(result.data)
+  userInfo.value = result.data;
   ElMessage.success("修改用户信息成功")
 }
 const changeUserAvatar = async () => {
