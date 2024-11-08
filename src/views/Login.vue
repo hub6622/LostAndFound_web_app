@@ -85,6 +85,7 @@
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>
         </el-form-item>
       </el-form>
+      <span>我是管理员，前往登录</span>
     </div>
   </div>
 </template>
@@ -215,7 +216,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url(../statis/loginBGI.jpg);
+  background-image: url(../statis/2487904243.jpg);
   display: flex;
   justify-content: center;
   align-items: center;
